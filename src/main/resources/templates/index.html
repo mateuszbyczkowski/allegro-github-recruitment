@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Allegro recent repository</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />
+</head>
+<body>
+<div class="container">
+    <h2 style="text-align: center">Recent modified Allegro repository</h2>
+    <table class="table table-bordered table-responsive">
+        <tbody>
+        <tr>
+            <th>Repository name</th>
+            <th>Modification date</th>
+        </tr>
+        <tr>
+            <td th:text="${repository.getRepositoryName()}"></td>
+            <td th:text="${repository.getUpdatedAt()}"></td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>
