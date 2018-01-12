@@ -1,8 +1,7 @@
 package pl.allegro.recruitment.allegro_github.web.rest;
 
-
+import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
@@ -13,16 +12,23 @@ import pl.allegro.recruitment.allegro_github.web.rest.errors.GithubErrorOccurred
 import pl.allegro.recruitment.allegro_github.web.rest.errors.GithubRepositoryOrUserNotFoundException;
 import pl.allegro.recruitment.allegro_github.web.rest.models.RepositoryInfo;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Comparator;
+
 
 @Service
 public class GithubApiClient {
 
     private RepositoryInfo[] result;
+    private final RestTemplate restTemplate;
+    private final String uri;
+
+    public GithubApiClient(RestTemplateBuilder restTemplateBuilder) {
+        restTemplate = restTemplateBuilder.build();
+        uri = ApplicationConstants.GITHUB_API_USERS_URI + "allegro/repos";
+    }
 
     public RepositoryInfo getRepositoryInfo() {
-        final String uri = ApplicationConstants.GITHUB_API_USERS_URI + "allegro/repos";
-        RestTemplate restTemplate = new RestTemplate();
 
         try {
             result = restTemplate.getForObject(uri, RepositoryInfo[].class);
