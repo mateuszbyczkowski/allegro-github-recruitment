@@ -21,14 +21,13 @@ public class GithubApiClient {
 
     private RepositoryInfo[] result;
     private final RestTemplate restTemplate;
-    private final String uri;
 
     public GithubApiClient(RestTemplateBuilder restTemplateBuilder) {
+
         restTemplate = restTemplateBuilder.build();
-        uri = ApplicationConstants.GITHUB_API_USERS_URI + "allegro/repos";
     }
 
-    public RepositoryInfo getRepositoryInfo() {
+    public RepositoryInfo getRepositoryInfo(String uri) {
 
         try {
             result = restTemplate.getForObject(uri, RepositoryInfo[].class);
