@@ -5,7 +5,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
-import pl.allegro.recruitment.allegro_github.web.rest.constants.ApplicationConstants;
 import pl.allegro.recruitment.allegro_github.web.rest.errors.GithubApiConnectionTimeoutException;
 import pl.allegro.recruitment.allegro_github.web.rest.errors.GithubEmptyArrayException;
 import pl.allegro.recruitment.allegro_github.web.rest.errors.GithubErrorOccurredException;
@@ -35,16 +34,16 @@ public class GithubApiClient {
             HttpStatus statusCode = e.getStatusCode();
 
             switch (statusCode) {
+                case INTERNAL_SERVER_ERROR:
+                    throw new GithubErrorOccurredException("Internal Github server error occurred, please try again later.");
                 case BAD_REQUEST:
-                    throw new GithubErrorOccurredException("Request incorrect, check request uri and try again.");
+                     throw new GithubErrorOccurredException("Request incorrect, check request uri and try again.");
                 case FORBIDDEN:
                     throw new GithubErrorOccurredException("Requesting content is forbidden!");
                 case NOT_FOUND:
                     throw new GithubRepositoryOrUserNotFoundException("Repository or User not found, uri may be incorrect.");
                 case REQUEST_TIMEOUT:
                     throw new GithubApiConnectionTimeoutException("Connection timeout.");
-                case INTERNAL_SERVER_ERROR:
-                    throw new GithubErrorOccurredException("Internal Github server error occurred, please try again later.");
             }
         }
 
