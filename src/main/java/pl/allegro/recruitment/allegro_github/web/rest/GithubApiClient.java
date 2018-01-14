@@ -1,11 +1,9 @@
 package pl.allegro.recruitment.allegro_github.web.rest;
 
 import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-<<<<<<< HEAD
 import org.springframework.web.client.HttpStatusCodeException;
-=======
->>>>>>> master
 import org.springframework.web.client.RestTemplate;
 import pl.allegro.recruitment.allegro_github.web.rest.errors.*;
 import pl.allegro.recruitment.allegro_github.web.rest.models.RepositoryInfo;
@@ -18,6 +16,8 @@ public class GithubApiClient {
 
     private final RestTemplate restTemplate;
 
+    private RepositoryInfo[] repositories;
+
     public GithubApiClient(RestTemplateBuilder restTemplateBuilder) {
 
         restTemplate = restTemplateBuilder.build();
@@ -25,20 +25,13 @@ public class GithubApiClient {
 
     public RepositoryInfo getRepositoryInfo(String uri) {
 
-<<<<<<< HEAD
         try {
-            result = restTemplate.getForObject(uri, RepositoryInfo[].class);
+            repositories = restTemplate.getForObject(uri, RepositoryInfo[].class);
         } catch (HttpStatusCodeException e) {
-
             throwExceptionForStatusCode(e.getStatusCode());
         }
 
-        return getRecentUpdatedRepository(result);
-=======
-        RepositoryInfo[] repositories = restTemplate.getForObject(uri, RepositoryInfo[].class);
-
         return getRecentUpdatedRepository(repositories);
->>>>>>> master
     }
 
     private RepositoryInfo getRecentUpdatedRepository(RepositoryInfo[] repositoryInfos) {
@@ -49,7 +42,6 @@ public class GithubApiClient {
                         new GithubEmptyArrayException("Unable to get latest repository data, processing object may be empty."));
     }
 
-<<<<<<< HEAD
     private void throwExceptionForStatusCode(HttpStatus status) {
         switch (status) {
             case INTERNAL_SERVER_ERROR:
@@ -64,6 +56,5 @@ public class GithubApiClient {
                 throw new GithubApiConnectionTimeoutException("Connection timeout.");
         }
     }
-=======
->>>>>>> master
+
 }

@@ -9,10 +9,13 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import java.io.IOException;
+
 @ControllerAdvice
 public class GithubErrorsExceptionHandler extends ResponseEntityExceptionHandler {
 
-<<<<<<< HEAD
+    private static final String DEFAULT_ERROR_VIEW = "errorpage";
+
     @ExceptionHandler(value = {GithubErrorOccurredException.class,
             GithubApiConnectionTimeoutException.class,
             GithubRepositoryOrUserNotFoundException.class,
@@ -20,48 +23,11 @@ public class GithubErrorsExceptionHandler extends ResponseEntityExceptionHandler
             GithubInternalServerErrorException.class,
             GithubForbiddenUriException.class,
             IOException.class})
-    protected String handleApiError(RuntimeException ex, Model model) {
-=======
-    private static final String DEFAULT_ERROR_VIEW = "errorpage";
 
-    @ExceptionHandler(HttpClientErrorException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public String handleBadRequestErrorException(Model model) {
+    public String handleError(RuntimeException ex, Model model) {
 
-        model.addAttribute("errorMessage", "Request incorrect, check request uri and try again.");
+        model.addAttribute("errorMessage", ex.getMessage());
         return DEFAULT_ERROR_VIEW;
     }
 
-    @ExceptionHandler(HttpClientErrorException.class)
-    @ResponseStatus(HttpStatus.FORBIDDEN)
-    public String handleForbiddenErrorException(Model model) {
-
-        model.addAttribute("errorMessage", "Requesting content is forbidden!");
-        return DEFAULT_ERROR_VIEW;
-    }
-
-    @ExceptionHandler(HttpClientErrorException.class)
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    public String handleNotFoundErrorException(Model model) {
-
-        model.addAttribute("errorMessage", "Repository or User not found, uri may be incorrect.");
-        return DEFAULT_ERROR_VIEW;
-    }
-
-    @ExceptionHandler(HttpClientErrorException.class)
-    @ResponseStatus(HttpStatus.REQUEST_TIMEOUT)
-    public String handleRequestTimeoutErrorException(Model model) {
-
-        model.addAttribute("errorMessage", "Connection timeout.");
-        return DEFAULT_ERROR_VIEW;
-    }
-
-    @ExceptionHandler(HttpServerErrorException.class)
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public String handleInternalServerErrorException(Model model) {
->>>>>>> master
-
-        model.addAttribute("errorMessage", "Internal server error! Please try again later.");
-        return DEFAULT_ERROR_VIEW;
-    }
 }

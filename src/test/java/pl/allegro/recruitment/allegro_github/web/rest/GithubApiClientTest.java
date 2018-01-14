@@ -9,11 +9,7 @@ import org.springframework.boot.test.autoconfigure.web.client.RestClientTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.client.MockRestServiceServer;
-<<<<<<< HEAD
-import pl.allegro.recruitment.allegro_github.web.rest.errors.*;
-=======
 import pl.allegro.recruitment.allegro_github.web.rest.errors.GithubEmptyArrayException;
->>>>>>> master
 import pl.allegro.recruitment.allegro_github.web.rest.models.RepositoryInfo;
 import java.util.GregorianCalendar;
 import static org.assertj.core.api.Java6Assertions.assertThat;
@@ -59,11 +55,7 @@ public class GithubApiClientTest {
     @Test
     public void shouldReturnCorrectRepositoryDetails() {
 
-<<<<<<< HEAD
-        this.server.expect(requestTo("/users/allegro/repos"))
-=======
         server.expect(requestTo("/users/allegro/repos"))
->>>>>>> master
                 .andRespond(withSuccess(repositoryString, MediaType.APPLICATION_JSON));
         RepositoryInfo repositoryInfo = this.client.getRepositoryInfo("/users/allegro/repos");
 
@@ -75,17 +67,10 @@ public class GithubApiClientTest {
         ));
     }
 
-<<<<<<< HEAD
     @Test (expected = GithubEmptyArrayException.class)
     public void shouldThrowEmptyArrayExceptionWhenResponseArrayIsEmpty() {
 
-        this.server.expect(requestTo("/users/CorrectRepo/repos"))
-=======
-    @Test(expected = GithubEmptyArrayException.class)
-    public void whenCallingGithubApiAndGetEmptyArray_thenClientThrowsEmptyArrayAndThrowException() {
-
         server.expect(requestTo("/users/CorrectRepo/repos"))
->>>>>>> master
                 .andRespond(withSuccess(emptyRepositoryString, MediaType.APPLICATION_JSON));
 
         client.getRepositoryInfo("/users/CorrectRepo/repos");
