@@ -6,16 +6,14 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.client.RestClientTest;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.client.MockRestServiceServer;
+import pl.allegro.recruitment.allegro_github.web.rest.errors.*;
 import pl.allegro.recruitment.allegro_github.web.rest.models.RepositoryInfo;
 import java.util.GregorianCalendar;
 import static org.assertj.core.api.Java6Assertions.assertThat;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
-import static org.springframework.test.web.client.response.MockRestResponseCreators.withBadRequest;
-import static org.springframework.test.web.client.response.MockRestResponseCreators.withStatus;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 
 @RunWith(SpringRunner.class)
@@ -55,102 +53,28 @@ public class GithubApiClientTest {
     }
 
     @Test
-    public void whenCallingGetRepositoryInfo_thenClientReturnsCorrectNameAndDate() {
+    public void shouldReturnCorrectRepositoryDetails() {
 
-        this.server.expect(requestTo("https://api.github.com/users/allegro/repos"))
+        this.server.expect(requestTo("/users/allegro/repos"))
                 .andRespond(withSuccess(repositoryString, MediaType.APPLICATION_JSON));
-        RepositoryInfo repositoryInfo = this.client.getRepositoryInfo("https://api.github.com/users/allegro/repos");
+        RepositoryInfo repositoryInfo = this.client.getRepositoryInfo("/users/allegro/repos");
 
         server.verify();
 
-        assertThat(repositoryInfo.getRepositoryName())
-                .isEqualTo("allegro/hermes");
-        assertThat(repositoryInfo.getUpdatedAt())
-                .isEqualTo(new GregorianCalendar(2018,1,11,13,13,13).getTime());
+        assertThat(repositoryInfo).isEqualTo(new RepositoryInfo(
+                "allegro/hermes",
+                new GregorianCalendar(2018,1,11,13,13,13).getTime()
+        ));
     }
 
-    @Test
-    public void whenCallingIncorrectGithubApiAddress_thenClientReturnsErrorOccurredException() {
+    @Test (expected = GithubEmptyArrayException.class)
+    public void shouldThrowEmptyArrayExceptionWhenResponseArrayIsEmpty() {
 
-        this.server.expect(requestTo("https://api.github.com/users/IncorrectUri/IncorrectRepo/repos"))
-                .andRespond(withBadRequest());
-
-        try{
-            client.getRepositoryInfo("https://api.github.com/users/IncorrectUri/IncorrectRepo/repos");
-            server.verify();
-        }catch(Exception e) {
-            assertThat(e.getMessage()).isEqualTo("Request incorrect, check request uri and try again.");
-        }
-    }
-
-    @Test
-    public void whenCallingForbiddenGithubApiPath_thenClientReturnsForbiddenException() {
-
-        this.server.expect(requestTo("https://api.github.com/users/ForbiddenRepo/repos"))
-                .andRespond(withStatus(HttpStatus.FORBIDDEN));
-
-        try{
-            client.getRepositoryInfo("https://api.github.com/users/ForbiddenRepo/repos");
-            server.verify();
-        }catch(Exception e) {
-            assertThat(e.getMessage()).isEqualTo("Requesting content is forbidden!");
-        }
-    }
-
-    @Test
-    public void whenCallingGithubApiTooLong_thenClientReturnsConnectionTimeOutException() {
-
-        this.server.expect(requestTo("https://api.github.com/users/CorrectRepo/repos"))
-                .andRespond(withStatus(HttpStatus.REQUEST_TIMEOUT));
-
-        try{
-            client.getRepositoryInfo("https://api.github.com/users/CorrectRepo/repos");
-            server.verify();
-        }catch(Exception e) {
-            assertThat(e.getMessage()).isEqualTo("Connection timeout.");
-        }
-    }
-
-    @Test
-    public void whenCallingGithubApiNotExistingRepository_thenClientReturnsNotFoundException() {
-
-        this.server.expect(requestTo("https://api.github.com/users/CorrectRepo/repos"))
-                .andRespond(withStatus(HttpStatus.NOT_FOUND));
-
-        try{
-            client.getRepositoryInfo("https://api.github.com/users/CorrectRepo/repos");
-            server.verify();
-        }catch(Exception e) {
-            assertThat(e.getMessage()).isEqualTo("Repository or User not found, uri may be incorrect.");
-        }
-    }
-
-/*    @Test
-    public void whenCallingGithubApi_thenClientReturnsInternalServerErrorException() {
-
-        this.server.expect(requestTo("https://api.github.com/users/CorrectRepo/repos"))
-                .andRespond(withStatus(HttpStatus.INTERNAL_SERVER_ERROR));
-
-        try{
-            client.getRepositoryInfo("https://api.github.com/users/CorrectRepo/repos");
-            server.verify();
-        }catch(Exception e) {
-            assertThat(e.getMessage()).isEqualTo("Internal Github server error occurred, please try again later.");
-        }
-    }*/
-
-    @Test
-    public void whenCallingGithubApi_thenClientReturnsEmptyArrayAndThrowException() {
-
-        this.server.expect(requestTo("https://api.github.com/users/CorrectRepo/repos"))
+        this.server.expect(requestTo("/users/CorrectRepo/repos"))
                 .andRespond(withSuccess(emptyRepositoryString, MediaType.APPLICATION_JSON));
 
-        try{
-            client.getRepositoryInfo("https://api.github.com/users/CorrectRepo/repos");
-            server.verify();
-        }catch(Exception e) {
-            assertThat(e.getMessage()).isEqualTo("Unable to get latest repository data, processing object may be empty.");
-        }
+        client.getRepositoryInfo("/users/CorrectRepo/repos");
+        server.verify();
     }
 
 }

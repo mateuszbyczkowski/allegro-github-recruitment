@@ -5,4 +5,5 @@ public class GithubRepositoryOrUserNotFoundException extends RuntimeException {
     public GithubRepositoryOrUserNotFoundException(String message) {
         super(message);
     }
+
 }

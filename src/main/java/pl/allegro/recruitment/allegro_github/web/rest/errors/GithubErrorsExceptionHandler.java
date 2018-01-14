@@ -14,6 +14,8 @@ public class GithubErrorsExceptionHandler extends ResponseEntityExceptionHandler
             GithubApiConnectionTimeoutException.class,
             GithubRepositoryOrUserNotFoundException.class,
             GithubEmptyArrayException.class,
+            GithubInternalServerErrorException.class,
+            GithubForbiddenUriException.class,
             IOException.class})
     protected String handleApiError(RuntimeException ex, Model model) {
 
